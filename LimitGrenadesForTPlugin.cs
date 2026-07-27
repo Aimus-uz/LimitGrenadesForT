@@ -52,18 +52,18 @@ public class LimitGrenadesForTPlugin : BasePlugin
         // Повторяющийся таймер: раз в секунду срезаем лишнее, пока игрок жив.
         // Так ловим и разовую выдачу карты при спавне, и повторные
         // выдачи/подборы в течение раунда.
-        var timer = AddTimer(EnforceIntervalSeconds, () => { }, TimerFlags.REPEAT | TimerFlags.STOP_ON_MAPCHANGE);
-        timer.Callback = () =>
+        CounterStrikeSharp.API.Modules.Timers.Timer? timer = null;
+        timer = AddTimer(EnforceIntervalSeconds, () =>
         {
             var p = Utilities.GetPlayerFromSlot(slot);
             if (p == null || !p.IsValid || !p.PawnIsAlive || p.Team != CsTeam.Terrorist)
             {
-                timer.Kill();
+                timer?.Kill();
                 return;
             }
 
             LimitGrenades(p);
-        };
+        }, TimerFlags.REPEAT | TimerFlags.STOP_ON_MAPCHANGE);
 
         return HookResult.Continue;
     }
